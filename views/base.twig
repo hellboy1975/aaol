@@ -45,16 +45,42 @@
                   <li><a href="/hikes">Hikes</a></li>
                   <li><a href="/climbs">Climbs</a></li>
                   <li><a href="/abseils">Abseils</a></li>
-                  <li class="divider"></li>
-                  <li class="dropdown-header">My Activities</li>
-                  <li><a href="/my-log">View Log</a></li>
-                  <li><a href="/add">Add Activity</a></li>
                               
               </ul>
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="../login/">Login</a></li>
+
+          {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+
+          
+              <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Welcome {{ app.security.token.user.username }} <b class="caret"></b></a>
+
+                  <ul class="dropdown-menu">
+
+                      <li><a href="/settings">Settings</a></li>
+                      <li class="divider"></li>
+                      <li class="dropdown-header">My Activities</li>
+                      <li><a href="/my-log">View Log</a></li>
+                      <li><a href="/add">Add Activity</a></li>
+
+                      {% if is_granted('ROLE_ADMIN') %}
+                          <li class="divider"></li>
+                          <li class="dropdown-header">Admin</li>
+                          <li><a href="/admin/news">News</a></li>
+                          <li><a href="/admin">Users</a></li>
+                      {% endif %}
+                                  
+                  </ul>
+
+              </li>
+
+              
+              <li><a href="{{ path('logout') }}">Log out</a></li>
+          {% else %}
+              <li><a href="../login">Login</a></li>
+          {% endif %}
+            
           </ul>
         </div><!--/.nav-collapse -->
       </div>
