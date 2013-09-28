@@ -1,6 +1,6 @@
 <?php
 
-// Constant definitions
+// Constant definitions.
 
 define("SQL_PASSWORD", "somethingelse");
 
