@@ -1,0 +1,7 @@
+{# template for posts #}
+
+<h3>{{ post.title }}</h3>
+
+{{ post.content|raw }}
+
+<p class="post-footer">Posted by {{ post.username }} on {{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}
