@@ -13,6 +13,8 @@ $app = new Silex\Application();
 $app->register(new Silex\Provider\SessionServiceProvider()); 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider()); 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider()); 
+$app->register(new Silex\Provider\TranslationServiceProvider());
+$app->register(new Silex\Provider\FormServiceProvider());
 
 // register database 
 
@@ -51,11 +53,6 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 	)
 );
 
-
-
 $app['debug'] = true;
-
-
-
 
 return $app;
