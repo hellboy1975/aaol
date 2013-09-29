@@ -2,9 +2,9 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-$app = require __DIR__.'/config.php';
+require __DIR__.'/config.php';
 
-$app = require __DIR__.'/user.php';
+require __DIR__.'/model/users.php';
 
 $app = new Silex\Application();
 
