@@ -3,8 +3,23 @@
 
 {% block content %}
 <div>
-    <h1>Hello there!</h1>
-    <p>Welcome to AAOL, or the Adventurous Activities Online Log.  This site isn't really operational yet, but when it is it will let you login in a keep a track of all your adventurous activities, including Caving, Canyoning, Hiking, Abseiling, Rockclimbing and more.</p>
+    <h1>Welcome to AAOL</h1>
+    <p><strong>AAOL</strong> is the <em>Adventurous Activities Online Log</em>.  This site isn't really operational yet, but when it is it will let you login in a keep a track of all your adventurous activities, including Caving, Canyoning, Hiking, Abseiling, Rockclimbing and more.</p>
     <p>Registrations are closed for the time being, but will be opened up eventually.  Keep an eye on this page for details.</p>
 </div>
+
+<h2>Latest News</h2>
+
+{% for post in posts %}
+    <h3>{{ post.title }}</h3>
+    
+    {{ post.content|raw }}
+
+    <p class="post-footer">Posted by {{ post.username }} on {{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}
+{% else %}
+    No posts have been found.
+{% endfor %}
+
+
+
 {% endblock %}      
