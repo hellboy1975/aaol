@@ -1,16 +1,21 @@
 
 {% extends "base.twig" %}
 
-    
-
-
 {% block content %}
 
 <form action="{{ path('admin_login_check') }}" method="post">
     {{ error }}
-    <input type="text" name="_username" value="{{ last_username }}" />
-    <input type="password" name="_password" value="" />
+    <div>
+	    Login:<br>
+    	<input type="text" name="_username" value="{{ last_username }}" />
+    </div>
+    <div>
+    	Password:<br>
+    	<input type="password" name="_password" value="" />
+    </div>
     <input type="submit" />
+
+    <p>Registrations are currently limited on AAOL while it's in development.  When the site is ready for public testing, there will be a mechanism to allow you to self register.</p>
 </form>
 
 {% endblock %}      
