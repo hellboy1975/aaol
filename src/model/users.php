@@ -7,6 +7,116 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\DBAL\Connection;
 
+//namespace AAOL\Model\User;
+
+class AAOLUser implements UserInterface
+{
+    private $username;
+    private $id;
+    private $password;
+    private $enabled;
+    private $accountNonExpired;
+    private $credentialsNonExpired;
+    private $accountNonLocked;
+    private $roles;
+
+    public function __construct($id, $username, $password, array $roles = array(), $enabled = true, $userNonExpired = true, $credentialsNonExpired = true, $userNonLocked = true)
+    {
+        if (empty($username)) {
+            throw new \InvalidArgumentException('The username cannot be empty.');
+        }
+
+        $this->id = $id;
+        $this->username = $username;
+        $this->password = $password;
+        $this->enabled = $enabled;
+        $this->accountNonExpired = $userNonExpired;
+        $this->credentialsNonExpired = $credentialsNonExpired;
+        $this->accountNonLocked = $userNonLocked;
+        $this->roles = $roles;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getID()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSalt()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAccountNonExpired()
+    {
+        return $this->accountNonExpired;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAccountNonLocked()
+    {
+        return $this->accountNonLocked;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isCredentialsNonExpired()
+    {
+        return $this->credentialsNonExpired;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function eraseCredentials()
+    {
+    }
+}
+
+
 class UserProvider implements UserProviderInterface
 {
     private $conn;
@@ -24,12 +134,12 @@ class UserProvider implements UserProviderInterface
             throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
         }
 
-        return new User($user['username'], $user['password'], explode(',', $user['roles']), true, true, true, true);
+        return new AAOLUser($user['id'], $user['username'], $user['password'], explode(',', $user['roles']), true, true, true, true);
     }
 
     public function refreshUser(UserInterface $user)
     {
-        if (!$user instanceof User) {
+        if (!$user instanceof AAOLUser) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
@@ -38,6 +148,7 @@ class UserProvider implements UserProviderInterface
 
     public function supportsClass($class)
     {
+        // not sure what this should be set to, but it appears to work for now!
         return $class === 'Symfony\Component\Security\Core\User\User';
     }
 }
