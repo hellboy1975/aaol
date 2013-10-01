@@ -51,10 +51,14 @@ $app->match('/admin/newpost', function (Request $request) use ($app) {
         ->add('content', 'textarea', array(
 			'attr' => array('class' => 'html-editor'),
         ))
-        ->add('type', 'choice', array(
-            'choices' => array(POST_TYPE_NEWS => 'News', POST_TYPE_USER => 'User'),
+        ->add('category', 'choice', array(
+            'choices' => array(POST_TYPE_NEWS => 'News', POST_TYPE_USER => 'User', POST_TYPE_DEV => 'Development'),
             'expanded' => false,
             'multiple' => false,
+        ))
+        ->add('allow_comments', 'choice', array(
+            'choices' => array(1 => 'Yes', 0 => 'No'),
+            'expanded' => false,
         ))
         ->getForm();
 
@@ -64,16 +68,28 @@ $app->match('/admin/newpost', function (Request $request) use ($app) {
         if ($form->isValid()) {
             $data = $form->getData();
 
-            // do something with the data
+            $user = $app['security']->getToken()->getUser();
+
+            //commented out until site is a little more secure...
+            
+			// $app['db']->insert('post', array(
+			// 	'title' 			=> $data['title'],
+			// 	'content' 			=> $data['content'],
+			// 	'category' 			=> $data['category'],
+			// 	'allow_comments' 	=> $data['allow_comments'],
+			// 	'user_id' 			=> $user->getID(),
+			// ));
 
             // redirect somewhere
             return $app->redirect('/');
+
         }
     }
 
     // display the form
     return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
 });
+
 
 
 return $app;
