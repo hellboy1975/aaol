@@ -5,25 +5,33 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 $user = $app['controllers_factory'];
 
 $user->match('/', function (Request $request) use ($app) {
 
 	$user = $app['security']->getToken()->getUser();
 
+	$userFields = $user->getFields();
+
     // some default data for when the form is displayed the first time
     $data = array(
-        'title' => 'Post title'
+        'first_name' => $userFields['first_name'],
+        'last_name' => $userFields['last_name'],
+        'email' => $userFields['email']
     );
 
 
 
     $form = $app['form.factory']->createBuilder('form', $data)
-        ->add('first-name')
-        ->add('last-name')
-        ->add('email', 'text', array(
-        'constraints' => new Assert\Email()
+        ->add('first_name', 'text', array(
+        	'label' => 'First Name'
         ))
+        ->add('last_name', 'text', array(
+        	'label' => 'Last Name'
+        ))
+        ->add('email', 'email')
         ->getForm();
 
     if ('POST' == $request->getMethod()) {
@@ -33,16 +41,10 @@ $user->match('/', function (Request $request) use ($app) {
         {
             $data = $form->getData();
             
-			// $app['db']->insert('post', array(
-			// 	'title' 			=> $data['title'],
-			// 	'content' 			=> $data['content'],
-			// 	'category' 			=> $data['category'],
-			// 	'allow_comments' 	=> $data['allow_comments'],
-			// 	'user_id' 			=> $user->getID(),
-			// ));
+			$app['db']->update('user', $data, array('id' => $user->getID()));
 
             // redirect back to the homepage for now
-            return $app->redirect('/');
+            return $app->redirect('/settings');
 
         }
     }

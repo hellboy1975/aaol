@@ -14,13 +14,15 @@ class AAOLUser implements UserInterface
     private $username;
     private $id;
     private $password;
+    private $fields;
+
     private $enabled;
     private $accountNonExpired;
     private $credentialsNonExpired;
     private $accountNonLocked;
     private $roles;
 
-    public function __construct($id, $username, $password, array $roles = array(), $enabled = true, $userNonExpired = true, $credentialsNonExpired = true, $userNonLocked = true)
+    public function __construct($id, $username, $password, array $roles = array(), $fields, $enabled = true, $userNonExpired = true, $credentialsNonExpired = true, $userNonLocked = true)
     {
         if (empty($username)) {
             throw new \InvalidArgumentException('The username cannot be empty.');
@@ -29,6 +31,8 @@ class AAOLUser implements UserInterface
         $this->id = $id;
         $this->username = $username;
         $this->password = $password;
+        $this->fields = $fields;
+
         $this->enabled = $enabled;
         $this->accountNonExpired = $userNonExpired;
         $this->credentialsNonExpired = $credentialsNonExpired;
@@ -42,6 +46,14 @@ class AAOLUser implements UserInterface
     public function getID()
     {
         return $this->id;
+    }
+
+    /**
+     * Returns an array containing all the fields from the user record
+     */
+    public function getFields()
+    {
+        return $this->fields;
     }
 
     /**
@@ -134,7 +146,7 @@ class UserProvider implements UserProviderInterface
             throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
         }
 
-        return new AAOLUser($user['id'], $user['username'], $user['password'], explode(',', $user['roles']), true, true, true, true);
+        return new AAOLUser($user['id'], $user['username'], $user['password'], explode(',', $user['roles']), $user,  true, true, true, true);
     }
 
     public function refreshUser(UserInterface $user)
