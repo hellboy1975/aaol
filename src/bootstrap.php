@@ -8,13 +8,15 @@ require __DIR__.'/model/users.php';
 
 $app = new Silex\Application();
 
-
+use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 $app->register(new Silex\Provider\SessionServiceProvider()); 
 $app->register(new Silex\Provider\ServiceControllerServiceProvider()); 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider()); 
 $app->register(new Silex\Provider\TranslationServiceProvider());
 $app->register(new Silex\Provider\FormServiceProvider());
+$app->register(new Silex\Provider\ValidatorServiceProvider());
+
 
 // register database 
 
@@ -49,9 +51,25 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 		),
 		'security.access_rules' => array(
 		    array('^/admin','ROLE_ADMIN'),
+		),
+		'security.access_rules' => array(
+		    array('^/settings','ROLE_USER'),
 		)
+
 	)
+	
 );
+
+$app['security.role_hierarchy'] = array(
+    'ROLE_ADMIN' => array('ROLE_USER'),
+);
+
+$app['security.encoder.digest'] = $app->share(function ($app) {
+    // use the sha1 algorithm
+    // don't base64 encode the password
+    // use only 1 iteration
+    return new MessageDigestPasswordEncoder('sha1', false, 1);
+});
 
 $app['debug'] = true;
 
