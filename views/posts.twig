@@ -1,7 +1,7 @@
 {# template for posts #}
 
-<h3>{{ post.title }}</h3>
+<h3><a href="/post/{{ post.slug }}">{{ post.title }}</a></h3>
 
 {{ post.content|raw }}
 
-<p class="post-footer">Posted by {{ post.username }} on {{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}
+<p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> {% if post.can_edit %} <a href="/user/editpost/{{ post.id }}">Edit</a> {% endif %}

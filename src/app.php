@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 $app->get('/', function () use ($app) {
 
-	$p = new PostsModel( $app['db'] );
+	$p = new PostsModel( $app['db'], $app );
 	$posts = $p->getPosts();
 
     return $app['twig']->render('index.twig', array(

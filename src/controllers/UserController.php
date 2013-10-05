@@ -58,7 +58,8 @@ $user->match('/newpost', function (Request $request) use ($app) {
 
     // some default data for when the form is displayed the first time
     $data = array(
-        'title' => 'Post title'
+        'title' => 'Post title',
+        'slug' => 'post-title'
     );
 
 	// The categories a user may choose from is limited by their role    
@@ -68,6 +69,7 @@ $user->match('/newpost', function (Request $request) use ($app) {
 
     $form = $app['form.factory']->createBuilder('form', $data)
         ->add('title')
+        ->add('slug')
         ->add('content', 'textarea', array(
 			'attr' => array('class' => 'html-editor'),
         ))
@@ -91,6 +93,7 @@ $user->match('/newpost', function (Request $request) use ($app) {
             
 			$app['db']->insert('post', array(
 				'title' 			=> $data['title'],
+				'slug' 			=> $data['slug'],
 				'content' 			=> $data['content'],
 				'category' 			=> $data['category'],
 				'allow_comments' 	=> $data['allow_comments'],
@@ -103,7 +106,7 @@ $user->match('/newpost', function (Request $request) use ($app) {
         }
     }
     // display the form
-    return $app['twig']->render('default_form.twig', array('form' => $form->createView()));
+    return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
 });
 
 $user->match('/password', function (Request $request) use ($app) {
