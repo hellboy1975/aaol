@@ -35,7 +35,8 @@ $app->get('/login', function(Request $request) use ($app) {
         'error'         => $app['security.last_error']($request),
         'last_username' => $app['session']->get('_security.last_username'),
     ));
-});
+})
+->bind('login');
 
 $app->mount('/admin', $admin);
 $app->mount('/settings', $user);

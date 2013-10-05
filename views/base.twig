@@ -93,11 +93,12 @@
       </div>
     </div>
 
-    <div class="container">
+    <div class="container {{ current_page_name|default('undefined') }}">
 
     {% block content %}{% endblock %}
 
-      
+
+        
 
     </div> <!-- /container -->
 
