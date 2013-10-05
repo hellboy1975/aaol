@@ -13,9 +13,21 @@
    // Listen for the jQuery ready event on the document
    $(function() {
 
-     // The DOM is ready!
+      // The DOM is ready!
+ 
+      // turn on the ckeditor
+      $( 'textarea.html-editor' ).ckeditor();
 
-     $( 'textarea.html-editor' ).ckeditor();
+     /**
+      * /newpost
+      *
+      * When the post title changes, automatically update the slug (convert it to lowercase and replace space with -)
+      */
+      $('#form_title').change(function() {
+          var title = $(this).val().toLowerCase().replace(/ /g,"-");;
+          $('#form_slug').val(title);
+      });
+      
 
    });
 
