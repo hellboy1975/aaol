@@ -32,8 +32,9 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 // register providers
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
-    'twig.path'       => __DIR__.'/../views',
-    'twig.class_path' => __DIR__.'/../vendor/twig/lib',
+    'twig.path'       	=> __DIR__.'/../views',
+    'twig.class_path' 	=> __DIR__.'/../vendor/twig/lib',
+    'twig.cache'		=> (!DEBUG_APP),  // disble caching when debugging
 ));
 
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
@@ -71,6 +72,6 @@ $app['security.encoder.digest'] = $app->share(function ($app) {
     return new MessageDigestPasswordEncoder('sha1', false, 1);
 });
 
-$app['debug'] = true;
+$app['debug'] = DEBUG_APP;
 
 return $app;
