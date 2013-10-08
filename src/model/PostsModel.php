@@ -9,6 +9,15 @@ use Doctrine\DBAL\Connection;
  */
 class PostsModel extends BaseModel
 {
+
+	private function _postsSelect()
+	{
+		return "SELECT post.id as id, title, content, category, time, allow_comments, slug, username, user_id
+					FROM post
+					JOIN user ON user.id = post.user_id";
+	}
+
+
 	/**
 	 * Returns an arraay of posts
 	 * @param  string $type The type of posts to fetch (defaults to NEWS)
@@ -19,18 +28,13 @@ class PostsModel extends BaseModel
 	 */
 	public function getPosts($category = "NEWS", $count = 10, $order = "DATE_DESC", $user = 1)
 	{
-		
-		//$sql = "SELECT * FROM post WHERE category = ? AND display = 1";
-		$sql = "SELECT post.id as id, title, content, category, time, allow_comments, slug, username, user_id
-					FROM post
-					JOIN user ON user.id = post.user_id
+		$select = $this->_postsSelect($where);
+		$sql = "$select 
 					WHERE category =  ?
-					AND display =1";
-
-		$posts = $this->db->fetchAll($sql, array((string) $category));					
+					AND display = 1";					
 
 		
-		
+		$posts = $this->db->fetchAll($sql, array((string) $category));						
 
 		// need to loop through each record and check if the post can be edited by the current user
 		foreach($posts as &$post) 
@@ -43,6 +47,26 @@ class PostsModel extends BaseModel
 		}
 		
     	return $posts;
+	}
+
+	/**
+	 * Fetchs a single Post record, usually to display or edit
+	 * @param  variable $id The identifier for the post.  Can be an integer (id) or a string (title)
+	 * @return array     An array containing the post data
+	 */
+	public function fetchPost($id) {
+
+		if (is_numeric($id)) 	$where = "post.id = $id";
+		else 					$where = "post.slug = '$id'";
+
+		$select = $this->_postsSelect($where);
+		
+		$sql = "$select
+					WHERE $where";
+
+		$post = $this->db->fetchAll($sql, array((string) $category));						
+
+		return $post; 				
 	}
 }
 

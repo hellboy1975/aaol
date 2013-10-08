@@ -10,6 +10,7 @@ $app = require __DIR__.'/bootstrap.php';
 
 require __DIR__.'/controllers/AdminController.php';
 require __DIR__.'/controllers/UserController.php';
+require __DIR__.'/controllers/PostController.php';
 
 
 /**
@@ -40,6 +41,7 @@ $app->get('/login', function(Request $request) use ($app) {
 
 $app->mount('/admin', $admin);
 $app->mount('/settings', $user);
+$app->mount('/post', $posts);
 
 
 return $app;

@@ -1,0 +1,11 @@
+
+{% extends "base.twig" %}
+
+{% set current_page_name = 'single-post' %}
+{% set page_title = post.title ~ ' |' %}
+
+{% block content %}
+   	
+   	{{ include('posts.twig') }}
+
+{% endblock %}  

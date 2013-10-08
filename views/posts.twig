@@ -4,4 +4,8 @@
 
 {{ post.content|raw }}
 
-<p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> {% if post.can_edit %} <a href="/user/editpost/{{ post.id }}">Edit</a> {% endif %}
+<p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> 
+
+{% if current_page_name != 'single-post' %}
+	{% if post.can_edit|default(false) %} <a href="/post/edit/{{ post.id }}">Edit</a> {% endif %}
+{% endif %}	
