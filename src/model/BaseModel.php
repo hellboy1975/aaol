@@ -4,10 +4,10 @@ class BaseModel
 	protected $db;
 	protected $app;
 
-	function __construct( $db, $app )
+	function __construct( $db, Silex\Application $application )
 	{
 		$this->db = $db;
-		$this->app = $app;
+		$this->app = $application;
 	}
  
 }
