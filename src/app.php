@@ -41,7 +41,7 @@ $app->get('/login', function(Request $request) use ($app) {
 
 $app->mount('/admin', $admin);
 $app->mount('/settings', $user);
-$app->mount('/post', $posts);
+$app->mount('/post', $postController);
 
 
 return $app;

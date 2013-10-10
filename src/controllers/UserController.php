@@ -52,63 +52,11 @@ $user->match('/', function (Request $request) use ($app) {
     return $app['twig']->render('default_form.twig', array('form' => $form->createView()));
 });
 
-$user->match('/newpost', function (Request $request) use ($app) {
-
-	$user = $app['security']->getToken()->getUser();
-
-    // some default data for when the form is displayed the first time
-    $data = array(
-        'title' => 'Post title',
-        'slug' => 'post-title'
-    );
-
-	// The categories a user may choose from is limited by their role    
-    if ( in_array('ROLE_ADMIN', $user->getRoles() )) $categoryChoices = array(POST_TYPE_NEWS => 'News', POST_TYPE_USER => 'User', POST_TYPE_DEV => 'Development');
-    else $categoryChoices = array(POST_TYPE_USER => 'User');
 
 
-    $form = $app['form.factory']->createBuilder('form', $data)
-        ->add('title')
-        ->add('slug')
-        ->add('content', 'textarea', array(
-			'attr' => array('class' => 'html-editor'),
-        ))
-        ->add('category', 'choice', array(
-            'choices' => $categoryChoices,
-            'expanded' => false,
-            'multiple' => false,
-        ))
-        ->add('allow_comments', 'choice', array(
-            'choices' => array(1 => 'Yes', 0 => 'No'),
-            'expanded' => false,
-        ))
-        ->getForm();
-
-    if ('POST' == $request->getMethod()) {
-        $form->bind($request);
-
-        if ($form->isValid()) 
-        {
-            $data = $form->getData();
-            
-			$app['db']->insert('post', array(
-				'title' 			=> $data['title'],
-				'slug' 			=> $data['slug'],
-				'content' 			=> $data['content'],
-				'category' 			=> $data['category'],
-				'allow_comments' 	=> $data['allow_comments'],
-				'user_id' 			=> $user->getID(),
-			));
-
-            // redirect back to the homepage for now
-            return $app->redirect('/');
-
-        }
-    }
-    // display the form
-    return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
-});
-
+/**
+ * Change password controller
+ */
 $user->match('/password', function (Request $request) use ($app) {
 
 	$user = $app['security']->getToken()->getUser();

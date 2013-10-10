@@ -1,11 +1,15 @@
 {# template for posts #}
 
-<h3><a href="/post/{{ post.slug }}">{{ post.title }}</a></h3>
+{% if current_page_name == 'single-post' %}
+	<h1>{{ post.title }}</h1>
+{% else %}
+	<h3><a href="/post/view/{{ post.slug }}">{{ post.title }}</a></h3>
+{% endif %}	
 
 {{ post.content|raw }}
 
-<p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> 
+<p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/view/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> 
 
-{% if current_page_name != 'single-post' %}
-	{% if post.can_edit|default(false) %} <a href="/post/edit/{{ post.id }}">Edit</a> {% endif %}
-{% endif %}	
+
+{% if post.can_edit|default(false) %} <a href="/post/edit/{{ post.id }}">Edit</a> {% endif %}
+

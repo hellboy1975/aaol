@@ -11,10 +11,10 @@
     <title>{{ page_title|default('') }} AAOL</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../web/css/bootstrap.css" rel="stylesheet">
+    <link href="/web/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../web/css/aaol.css" rel="stylesheet">
+    <link href="/web/css/aaol.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -69,7 +69,8 @@
                       <li class="dropdown-header">User</li>
                       <li><a href="/settings">Settings</a></li>
                       <li><a href="/settings/password">Change Password</a></li>
-                      <li><a href="/settings/newpost">New Post</a></li>
+                      <li class="divider"></li>
+                      <li><a href="/post/new">New Post</a></li>
                   {% endif %}
 
                   {% if is_granted('ROLE_ADMIN') %}
@@ -109,10 +110,10 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
-    <script src="../web/js/bootstrap.min.js"></script>
-    <script src="../web/ckeditor/ckeditor.js"></script>
-    <script src="../web/ckeditor/adapters/jquery.js"></script>
+    <script src="/web/js/bootstrap.min.js"></script>
+    <script src="/web/ckeditor/ckeditor.js"></script>
+    <script src="/web/ckeditor/adapters/jquery.js"></script>
 
-    <script src="../web/js/aaol.js"></script>
+    <script src="/web/js/aaol.js"></script>
   </body>
 </html>
