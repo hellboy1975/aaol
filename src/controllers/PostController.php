@@ -16,20 +16,69 @@ $postController = $app['controllers_factory'];
 
 
 
+/**
+ *  post/edit controller
+ */
+$postController->match('/edit/{id}', function (Silex\Application $app, Request $request, $id)  {
 
-$postController->get('/edit/{id}', function (Silex\Application $app, $id)  {
-
-	$p = new PostsModel( $app['db'], $app );
+    // first thing we should check if the user has permission to edit this post!
+	
+    $p = new PostsModel( $app['db'], $app );
 	$post = $p->fetchPost($id);
 
+    $user = $app['security']->getToken()->getUser();
 
-    return $app['twig']->render('single-post.twig', array(
-    	'post' => $post[0],
-    ));
-	// check to see if user can edit this post
-    return $app->abort(404, "Post $id does not exist.");
+    if  (  ($user->getID() != $post['user_id']) && !( in_array('ROLE_ADMIN', $user->getRoles() )) ) {
+        $app['twig']->render('denied.twig');
+    }
+        
+
+    // The categories a user may choose from is limited by their role    
+    if ( in_array('ROLE_ADMIN', $user->getRoles() )) $categoryChoices = array(POST_TYPE_NEWS => 'News', POST_TYPE_USER => 'User', POST_TYPE_DEV => 'Development');
+    else $categoryChoices = array(POST_TYPE_USER => 'User');
+
+    // generate the form handle
+    $form = $p->createForm($post, $categoryChoices);
+
+
+
+    if ('GET' == $request->getMethod()) 
+    {
+
+            // display the form
+            return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
+    }
+
+
+    
+
+    if ('POST' == $request->getMethod()) {
+        $form->bind($request);
+
+        if ($form->isValid()) 
+        {
+            $data = $form->getData();
+            
+            $app['db']->update('post', array(
+                'title'             => $data['title'],
+                'slug'          => $data['slug'],
+                'content'           => $data['content'],
+                'category'          => $data['category'],
+                'allow_comments'    => $data['allow_comments'],
+                ), array('id' => $id));
+            
+            // redirect to the post page
+            return $app->redirect('/post/view/' . $id);
+
+        }
+    }
+    
+    return $app->abort(404, "Not sure what the hell you are doing!");
 });
 
+/**
+ * post/new controller
+ */
 $postController->match('/new', function (Request $request) use ($app) {
 
 	$user = $app['security']->getToken()->getUser();
@@ -94,10 +143,8 @@ $postController->get('/view/{id}', function (Silex\Application $app, $id)  {
 	$p = new PostsModel( $app['db'], $app );
 	$post = $p->fetchPost($id);
 
-	//return print_r($post[0]);
-
     return $app['twig']->render('single-post.twig', array(
-    	'post' => $post[0],
+    	'post' => $post,
     ));
 	// check to see if user can edit this post
     return $app->abort(404, "Post $id does not exist.");

@@ -64,9 +64,29 @@ class PostsModel extends BaseModel
 		$sql = "$select
 					WHERE $where";
 
-		$post = $this->db->fetchAll($sql, array((string) $category));						
+		$post = $this->db->fetchAssoc($sql, array((string) $category));						
 
 		return $post; 				
+	}
+
+	public function createForm($data, $categoryChoices) 
+	{
+		return $this->app['form.factory']->createBuilder('form', $data)
+	        ->add('title')
+	        ->add('slug')
+	        ->add('content', 'textarea', array(
+	            'attr' => array('class' => 'html-editor'),
+	        ))
+	        ->add('category', 'choice', array(
+	            'choices' => $categoryChoices,
+	            'expanded' => false,
+	            'multiple' => false,
+	        ))
+	        ->add('allow_comments', 'choice', array(
+	            'choices' => array(1 => 'Yes', 0 => 'No'),
+	            'expanded' => false,
+	        ))
+	        ->getForm();
 	}
 }
 
