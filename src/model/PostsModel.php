@@ -18,23 +18,34 @@ class PostsModel extends BaseModel
 	}
 
 
+
 	/**
 	 * Returns an arraay of posts
 	 * @param  string $type The type of posts to fetch (defaults to NEWS)
 	 * @param  integer $count
-	 * @param  string $order
-	 * @param  integer $user
 	 * @return array
 	 */
-	public function getPosts($category = "NEWS", $count = 10, $order = "DATE_DESC")
+	private function _getPosts($category = "ALL", $count = 10)
 	{
 		$select = $this->_postsSelect($where);
-		$sql = "$select 
-					WHERE category =  ?
-					AND display = 1";					
 
-		
-		$posts = $this->db->fetchAll($sql, array((string) $category));						
+		// format the WHERE part of the statement
+		if ($category != POST_TYPE_ALL) 
+		{
+			
+			$sql = "$select 
+						WHERE category = ? 
+						AND display = 1";					
+	
+			$posts = $this->db->fetchAll($sql, array((string) $category));						
+		}
+
+		else {
+			$sql = "$select 
+						WHERE display = 1";					
+	
+			$posts = $this->db->fetchAll($sql, array((string) $category));						
+		}
 
 		// need to loop through each record and check if the post can be edited by the current user
 		foreach($posts as &$post) 
@@ -47,6 +58,16 @@ class PostsModel extends BaseModel
 		}
 		
     	return $posts;
+	}
+
+	/**
+	 * [fetchPostsByCategory description]
+	 * @param  string $category 	The category to fetch (can be ALL for fetch everything!
+	 * @return array          		An arra
+	 */
+	public function fetchPostsByCategory($category) 
+	{
+		return $this->_getPosts($category);
 	}
 
 	/**

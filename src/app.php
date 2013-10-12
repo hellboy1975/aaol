@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 $app->get('/', function () use ($app) {
 
 	$p = new PostsModel( $app['db'], $app );
-	$posts = $p->getPosts();
+	$posts = $p->fetchPostsByCategory(POST_TYPE_NEWS);
 
     return $app['twig']->render('index.twig', array(
     	'posts' => $posts,
