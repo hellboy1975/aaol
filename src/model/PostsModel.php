@@ -10,6 +10,12 @@ use Doctrine\DBAL\Connection;
 class PostsModel extends BaseModel
 {
 
+	public $filterUser;
+	public $filterOffset;
+	public $limit;
+
+	public $lastSQL; 
+
 	private function _postsSelect()
 	{
 		return "SELECT post.id as id, title, content, category, time, allow_comments, slug, username, user_id
@@ -20,17 +26,30 @@ class PostsModel extends BaseModel
 
 
 	/**
-	 * Returns an arraay of posts
-	 * @param  string $type The type of posts to fetch (defaults to NEWS)
-	 * @param  integer $count
-	 * @return array
+	 * [_getPosts description]
+	 * @param  string $category [description]
+	 * @param  string $userID   [description]
+	 * @return array            [description]
 	 */
-	private function _getPosts($category = "ALL", $count = 10)
+	private function _getPosts($category = POST_TYPE_ALL, $userID = '')
 	{
-		$select = $this->_postsSelect($where);
+		$select = $this->_postsSelect();
 
-		// format the WHERE part of the statement
-		if ($category != POST_TYPE_ALL) 
+		
+
+		// if both user and category are set
+		if (($category != POST_TYPE_ALL) && ($userID != '')) 
+		{
+			$sql = "$select 
+						WHERE category = ?
+						AND username = ?
+						AND display = 1";
+	
+			$posts = $this->db->fetchAll($sql, array((string) $category, (string) $userID));	
+		}			
+
+		// if just category is set
+		else if ($category != POST_TYPE_ALL) 
 		{
 			
 			$sql = "$select 
@@ -40,11 +59,23 @@ class PostsModel extends BaseModel
 			$posts = $this->db->fetchAll($sql, array((string) $category));						
 		}
 
+		// if just usertID is set
+		else if ($userID != '') 
+		{
+
+			$sql = "$select 
+						WHERE username = ?
+						AND display = 1";					
+	
+			$posts = $this->db->fetchAll($sql, array((string) $userID));						
+		}
+
+		// if neither category or user are set
 		else {
 			$sql = "$select 
 						WHERE display = 1";					
 	
-			$posts = $this->db->fetchAll($sql, array((string) $category));						
+			$posts = $this->db->fetchAll($sql);						
 		}
 
 		// need to loop through each record and check if the post can be edited by the current user
@@ -56,8 +87,15 @@ class PostsModel extends BaseModel
 			}
 			else $post['can_edit'] = false;
 		}
+
+		$this->lastSQL = $sql . " Cat: [$category] User: [$userID]";
 		
     	return $posts;
+	}
+
+	public function fetchPostsByCategoryUser($category, $userID = '') 
+	{
+		return $this->_getPosts($category, $userID);	
 	}
 
 	/**

@@ -1,0 +1,54 @@
+
+{% extends "base.twig" %}
+
+{% set current_page_name = 'post-admin' %}
+{% set page_title = 'Post Administration' ~ ' |' %}
+
+
+{% block content %}
+
+<h1>Post Administration</h1>
+<p>Click on a User or a Category below to filter posts</p>
+
+{# if the filter user or category is on then show the filters bar #}
+{% if (filter_user != '') or (filter_category != 'ALL') %}
+<p>
+	{% if filter_user != '' %}<a href="/admin/posts{% if filter_category != 'ALL' %}?category={{ filter_category }}{% endif %}">User: {{ filter_user }} &times;</a> {% endif %} 
+
+	{% if filter_category != 'ALL' %}<a href="/admin/posts{% if filter_user != '' %}?user={{ filter_user }}{% endif %}">Category: {{ filter_category }} &times;</a> {% endif %} 
+
+</p>
+{% endif %}	
+
+<table id="posts_table" class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Action</th>
+            <th>{# checkbox for bulk actions #}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for post in posts %}
+
+   		<tr>
+            <td><a href="/post/view/{{ post.slug }}">{{ post.title }}</a></td>
+            <td><a href="/admin/posts?user={{ post.username }}{% if filter_category != 'ALL' %}&category={{ filter_category }}{% endif %}">{{ post.username }}</a> [<a href="/user/{{ post.username }}">profile</a>]</td>
+            <td>{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</td>
+            <td><a href="/admin/posts?category={{ post.category }}{% if filter_user != '' %}&user={{ filter_user }}{% endif %}">{{ post.category }}</a></td>
+            <td><a href="/post/edit/{{ post.id }}">Edit</a> | Delete</td>
+            <td><input type="checkbox" name="post-{{ post.id }}" value="{{ post.id }}"></td>
+        </tr>
+
+	{% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}      
+
+
