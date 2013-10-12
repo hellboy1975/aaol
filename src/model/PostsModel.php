@@ -69,6 +69,39 @@ class PostsModel extends BaseModel
 		return $post; 				
 	}
 
+	/**
+	 * Updates a POST record
+	 * @param  integer $id   	id of the post to be updated
+	 * @param  array $data   	an array containing the updated data (usually created by a Silex Form)
+	 * @return handle      		handle to the PostController object
+	 */
+	public function updatePost($id, $data) 
+	{
+		$this->db->update('post', array(
+            'title'             => $data['title'],
+            'slug'          => $data['slug'],
+            'content'           => $data['content'],
+            'category'          => $data['category'],
+            'allow_comments'    => $data['allow_comments'],
+            ), array('id' => $id));
+
+		return $this;
+	}
+
+	public function insertPost($data) 
+	{
+		$this->db->insert('post', array(
+			'title' 			=> $data['title'],
+			'slug' 			=> $data['slug'],
+			'content' 			=> $data['content'],
+			'category' 			=> $data['category'],
+			'allow_comments' 	=> $data['allow_comments'],
+			'user_id' 			=> $data['user_id'],
+		));
+
+		return $this->db->lastInsertId();
+	}
+
 	public function createForm($data, $categoryChoices) 
 	{
 		return $this->app['form.factory']->createBuilder('form', $data)

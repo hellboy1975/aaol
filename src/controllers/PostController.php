@@ -19,19 +19,19 @@ $postController = $app['controllers_factory'];
 /**
  *  post/edit controller
  */
-$postController->match('/edit/{id}', function (Silex\Application $app, Request $request, $id)  {
-
-    // first thing we should check if the user has permission to edit this post!
-	
+$postController->match('/edit/{id}', function (Silex\Application $app, Request $request, $id)  
+{
     $p = new PostsModel( $app['db'], $app );
-	$post = $p->fetchPost($id);
+    $post = $p->fetchPost($id);
 
     $user = $app['security']->getToken()->getUser();
+
+    // first thing we should check if the user has permission to edit this post!
+
 
     if  (  ($user->getID() != $post['user_id']) && !( in_array('ROLE_ADMIN', $user->getRoles() )) ) {
         $app['twig']->render('denied.twig');
     }
-        
 
     // The categories a user may choose from is limited by their role    
     if ( in_array('ROLE_ADMIN', $user->getRoles() )) $categoryChoices = array(POST_TYPE_NEWS => 'News', POST_TYPE_USER => 'User', POST_TYPE_DEV => 'Development');
@@ -40,8 +40,7 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
     // generate the form handle
     $form = $p->createForm($post, $categoryChoices);
 
-
-
+    // iof it's a GET it means we're showing the Edit Post page
     if ('GET' == $request->getMethod()) 
     {
 
@@ -49,9 +48,7 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
             return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
     }
 
-
-    
-
+    // if it's a POST it means we are submitting a change
     if ('POST' == $request->getMethod()) {
         $form->bind($request);
 
@@ -59,13 +56,7 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
         {
             $data = $form->getData();
             
-            $app['db']->update('post', array(
-                'title'             => $data['title'],
-                'slug'          => $data['slug'],
-                'content'           => $data['content'],
-                'category'          => $data['category'],
-                'allow_comments'    => $data['allow_comments'],
-                ), array('id' => $id));
+            $p->updatePost($id, $data);
             
             // redirect to the post page
             return $app->redirect('/post/view/' . $id);
@@ -118,19 +109,13 @@ $postController->match('/new', function (Request $request) use ($app) {
         {
             $data = $form->getData();
             
-			$app['db']->insert('post', array(
-				'title' 			=> $data['title'],
-				'slug' 			=> $data['slug'],
-				'content' 			=> $data['content'],
-				'category' 			=> $data['category'],
-				'allow_comments' 	=> $data['allow_comments'],
-				'user_id' 			=> $user->getID(),
-			));
+			$data['user_id'] = $user->getID();
 
-			$lastID = $app['db']->lastInsertId();
+            $p = new PostsModel( $app['db'], $app );
+            $lastID = $p->insertPost($data);
 
             // redirect to the post page
-            return $app->redirect('/post/view' . $lastID);
+            return $app->redirect('/post/view/' . $lastID);
 
         }
     }
