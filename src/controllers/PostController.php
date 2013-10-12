@@ -90,8 +90,12 @@ $postController->match('/new', function (Request $request) use ($app) {
 
 
     $form = $app['form.factory']->createBuilder('form', $data)
-        ->add('title')
-        ->add('slug')
+        ->add('title', 'text', array(
+            'attr'=> array('class'=>'form-control')
+        ))
+        ->add('slug', 'text', array(
+            'attr'=> array('class'=>'form-control')
+        ))
         ->add('content', 'textarea', array(
 			'attr' => array('class' => 'html-editor'),
         ))
@@ -99,10 +103,12 @@ $postController->match('/new', function (Request $request) use ($app) {
             'choices' => $categoryChoices,
             'expanded' => false,
             'multiple' => false,
+            'attr'=> array('class'=>'form-control')
         ))
         ->add('allow_comments', 'choice', array(
             'choices' => array(1 => 'Yes', 0 => 'No'),
             'expanded' => false,
+            'attr'=> array('class'=>'form-control')
         ))
         ->getForm();
 

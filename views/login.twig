@@ -5,15 +5,15 @@
 
 <form action="{{ path('admin_login_check') }}" method="post">
     {{ error }}
-    <div>
+    <div class="form-group">
 	    Login:<br>
-    	<input type="text" name="_username" value="{{ last_username }}" />
+    	<input type="text" name="_username" class="form-control" value="{{ last_username }}" />
     </div>
-    <div>
+    <div class="form-group">
     	Password:<br>
-    	<input type="password" name="_password" value="" />
+    	<input type="password" name="_password" class="form-control" value="" />
     </div>
-    <button>Login</button>
+    <button class="btn btn-default">Login</button>
 
     <p>Registrations are currently limited on AAOL while it's in development.  When the site is ready for public testing, there will be a mechanism to allow you to self register.</p>
 </form>
