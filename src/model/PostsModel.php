@@ -26,7 +26,7 @@ class PostsModel extends BaseModel
 	 * @param  integer $user
 	 * @return array
 	 */
-	public function getPosts($category = "NEWS", $count = 10, $order = "DATE_DESC", $user = 1)
+	public function getPosts($category = "NEWS", $count = 10, $order = "DATE_DESC")
 	{
 		$select = $this->_postsSelect($where);
 		$sql = "$select 
@@ -64,7 +64,13 @@ class PostsModel extends BaseModel
 		$sql = "$select
 					WHERE $where";
 
-		$post = $this->db->fetchAssoc($sql, array((string) $category));						
+		$post = $this->db->fetchAssoc($sql, array((string) $category));		
+
+		if ($this->app['security']->isGranted('ROLE_USER')) {
+			$user = $this->app['security']->getToken()->getUser();
+			$post['can_edit'] = (( in_array('ROLE_ADMIN', $user->getRoles() )) || ($post['user_id'] == $user->getID()));
+		}
+		else $post['can_edit'] = false;				
 
 		return $post; 				
 	}
