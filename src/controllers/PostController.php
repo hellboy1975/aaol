@@ -45,7 +45,7 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
     {
 
             // display the form
-            return $app['twig']->render('newpost.twig', array( 
+            return $app['twig']->render('posts/newpost.twig', array( 
                 'form' => $form->createView(), 
                 'post_submit_label' => 'Update' 
                 ) 
@@ -124,7 +124,7 @@ $postController->match('/new', function (Request $request) use ($app) {
         }
     }
     // display the form
-    return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
+    return $app['twig']->render('posts/newpost.twig', array('form' => $form->createView()));
 });
 
 $postController->get('/view/{id}', function (Silex\Application $app, $id)  {
@@ -132,7 +132,7 @@ $postController->get('/view/{id}', function (Silex\Application $app, $id)  {
 	$p = new PostsModel( $app['db'], $app );
 	$post = $p->fetchPost($id);
 
-    return $app['twig']->render('single-post.twig', array(
+    return $app['twig']->render('posts/single-post.twig', array(
     	'post' => $post,
     ));
 	// check to see if user can edit this post
