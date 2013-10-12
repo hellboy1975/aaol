@@ -45,7 +45,11 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
     {
 
             // display the form
-            return $app['twig']->render('newpost.twig', array('form' => $form->createView()));
+            return $app['twig']->render('newpost.twig', array( 
+                'form' => $form->createView(), 
+                'post_submit_label' => 'Update' 
+                ) 
+            );
     }
 
     // if it's a POST it means we are submitting a change
