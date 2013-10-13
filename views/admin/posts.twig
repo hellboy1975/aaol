@@ -41,7 +41,7 @@
             <td><a href="/admin/posts?user={{ post.username }}{% if filter_category != 'ALL' %}&category={{ filter_category }}{% endif %}">{{ post.username }}</a> [<a href="/user/{{ post.username }}">profile</a>]</td>
             <td>{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</td>
             <td><a href="/admin/posts?category={{ post.category }}{% if filter_user != '' %}&user={{ filter_user }}{% endif %}">{{ post.category }}</a></td>
-            <td><a href="/post/edit/{{ post.id }}">Edit</a> | Delete</td>
+            <td><a href="/post/edit/{{ post.id }}">Edit</a> | <a href="/post/edit/{{ post.id }}?action=delete&from=admin" onclick="return confirm('Are you sure?')">Delete</a></td>
             <td><input type="checkbox" name="post-{{ post.id }}" value="{{ post.id }}"></td>
         </tr>
 

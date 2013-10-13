@@ -43,13 +43,25 @@ $postController->match('/edit/{id}', function (Silex\Application $app, Request $
     // iof it's a GET it means we're showing the Edit Post page
     if ('GET' == $request->getMethod()) 
     {
+        $action = $app['request']->query->get('action');
 
-            // display the form
-            return $app['twig']->render('posts/newpost.twig', array( 
-                'form' => $form->createView(), 
-                'post_submit_label' => 'Update' 
-                ) 
-            );
+        if ($action == 'delete') 
+        {
+            // if they're this far in then they should have permission to delete!
+            $p->deletePost($id);
+
+            $from = $app['request']->query->get('from');
+
+            if ($from == 'admin') return $app->redirect('/admin/posts');
+            else return $app->redirect('/');
+        }
+        
+        // display the form
+        return $app['twig']->render('posts/newpost.twig', array( 
+            'form' => $form->createView(), 
+            'post_submit_label' => 'Update' 
+            ) 
+        );
     }
 
     // if it's a POST it means we are submitting a change

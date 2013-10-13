@@ -11,10 +11,17 @@ class PostsModel extends BaseModel
 {
 
 	public $filterUser;
-	public $filterOffset;
+	public $offset;
 	public $limit;
 
 	public $lastSQL; 
+
+	function __construct( $db, Silex\Application $application )
+	{
+		parent::__construct($db, $application);
+		$this->limit = 100;
+		$this->offset = 0;
+	}
 
 	private function _postsSelect()
 	{
@@ -43,7 +50,7 @@ class PostsModel extends BaseModel
 			$sql = "$select 
 						WHERE category = ?
 						AND username = ?
-						AND display = 1";
+						AND display = 1 LIMIT {$this->offset}, {$this->limit}";
 	
 			$posts = $this->db->fetchAll($sql, array((string) $category, (string) $userID));	
 		}			
@@ -54,7 +61,7 @@ class PostsModel extends BaseModel
 			
 			$sql = "$select 
 						WHERE category = ? 
-						AND display = 1";					
+						AND display = 1 LIMIT {$this->offset}, {$this->limit}";					
 	
 			$posts = $this->db->fetchAll($sql, array((string) $category));						
 		}
@@ -65,7 +72,7 @@ class PostsModel extends BaseModel
 
 			$sql = "$select 
 						WHERE username = ?
-						AND display = 1";					
+						AND display = 1 LIMIT {$this->offset}, {$this->limit}";					
 	
 			$posts = $this->db->fetchAll($sql, array((string) $userID));						
 		}
@@ -73,7 +80,7 @@ class PostsModel extends BaseModel
 		// if neither category or user are set
 		else {
 			$sql = "$select 
-						WHERE display = 1";					
+						WHERE display = 1 LIMIT {$this->offset}, {$this->limit}";					
 	
 			$posts = $this->db->fetchAll($sql);						
 		}
@@ -88,8 +95,6 @@ class PostsModel extends BaseModel
 			else $post['can_edit'] = false;
 		}
 
-		$this->lastSQL = $sql . " Cat: [$category] User: [$userID]";
-		
     	return $posts;
 	}
 
@@ -153,6 +158,11 @@ class PostsModel extends BaseModel
 		return $this;
 	}
 
+	public function deletePost($id) 
+	{
+		$this->db->delete('post', array('id' => $id));
+	}
+
 	public function insertPost($data) 
 	{
 		$this->db->insert('post', array(
@@ -170,19 +180,25 @@ class PostsModel extends BaseModel
 	public function createForm($data, $categoryChoices) 
 	{
 		return $this->app['form.factory']->createBuilder('form', $data)
-	        ->add('title')
-	        ->add('slug')
+	        ->add('title', 'text', array(
+	            'attr' => array('class' => 'form-control')
+	        ))
+	        ->add('slug', 'text', array(
+	            'attr' => array('class' => 'form-control')
+	        ))
 	        ->add('content', 'textarea', array(
-	            'attr' => array('class' => 'html-editor'),
+	            'attr' => array('class' => 'html-editor')
 	        ))
 	        ->add('category', 'choice', array(
 	            'choices' => $categoryChoices,
 	            'expanded' => false,
 	            'multiple' => false,
+	            'attr'=> array('class'=>'form-control')
 	        ))
 	        ->add('allow_comments', 'choice', array(
 	            'choices' => array(1 => 'Yes', 0 => 'No'),
 	            'expanded' => false,
+	            'attr'=> array('class'=>'form-control')
 	        ))
 	        ->getForm();
 	}

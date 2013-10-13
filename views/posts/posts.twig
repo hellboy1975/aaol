@@ -11,5 +11,5 @@
 <p class="post-footer">Posted by <a href="/user/{{ post.username }}">{{ post.username }}</a> on <a href="/post/view/{{ post.slug }}">{{ post.time|date('H:i:s d/m/Y', 'Australia/Adelaide') }}</a> 
 
 
-{% if post.can_edit|default(false) %} <a href="/post/edit/{{ post.id }}">Edit</a> {% endif %}
+{% if post.can_edit|default(false) %} <a href="/post/edit/{{ post.id }}">Edit</a> | <a href="/post/edit/{{ post.id }}?action=delete&from=single" onclick="return confirm('Are you sure?')">Delete</a> {% endif %}
 
