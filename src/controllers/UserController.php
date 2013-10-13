@@ -26,12 +26,16 @@ $user->match('/', function (Request $request) use ($app) {
 
     $form = $app['form.factory']->createBuilder('form', $data)
         ->add('first_name', 'text', array(
-        	'label' => 'First Name'
+        	'label' => 'First Name',
+            'attr' => array('class' => 'form-control')  
         ))
         ->add('last_name', 'text', array(
-        	'label' => 'Last Name'
+        	'label' => 'Last Name',
+            'attr' => array('class' => 'form-control')
         ))
-        ->add('email', 'email')
+        ->add('email', 'email', array(
+            'attr' => array('class' => 'form-control'),
+        ))
         ->getForm();
 
     if ('POST' == $request->getMethod()) {
@@ -71,10 +75,10 @@ $user->match('/password', function (Request $request) use ($app) {
 		->add('password', 'repeated', array(
 		    'type' => 'password',
 		    'invalid_message' => 'The password fields must match.',
-		    'options' => array('attr' => array('class' => 'password-field')),
+		    'options' => array('attr' => array('class' => 'password-field form-control')),
 		    'required' => true,
 		    'first_options'  => array('label' => 'Password'),
-		    'second_options' => array('label' => 'Repeat Password'),
+		    'second_options' => array('label' => 'Repeat Password')
 		))
         ->getForm();
 
