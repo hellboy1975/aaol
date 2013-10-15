@@ -131,16 +131,18 @@ class AAOLUser implements UserInterface
 
 class UserProvider implements UserProviderInterface
 {
-    private $conn;
+    private $db;
 
-    public function __construct(Connection $conn)
+    public $lastSQL;
+
+    public function __construct(Connection $db)
     {
-        $this->conn = $conn;
+        $this->db = $db;
     }
 
     public function loadUserByUsername($username)
     {
-        $stmt = $this->conn->executeQuery('SELECT * FROM user WHERE username = ?', array(strtolower($username)));
+        $stmt = $this->db->executeQuery('SELECT * FROM user WHERE username = ?', array(strtolower($username)));
 
         if (!$user = $stmt->fetch()) {
             throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
@@ -162,5 +164,62 @@ class UserProvider implements UserProviderInterface
     {
         // not sure what this should be set to, but it appears to work for now!
         return $class === 'Symfony\Component\Security\Core\User\User';
+    }
+
+    private function _usersSelect()
+    {
+        return "SELECT id, username, roles, first_name, last_name, email, status
+                    FROM user";
+    }
+
+    public function fetchUsers($role = 'ALL', $status = 'ALL', $order = USER_ORDER_USERNAME_ASC, $limit = 100, $offset = 0) 
+    {
+        if ($order = USER_ORDER_USERNAME_ASC) $orderBy = "username ASC";
+        else $orderBy = "username DESC";
+
+        $select = $this->_usersSelect();
+
+        if (( $role != 'ALL' ) && ( $status != 'ALL' ))
+        {
+            $sql = "$select 
+                    WHERE roles = ? AND status = ?
+                    ORDER BY $orderBy
+                    LIMIT {$offset}, {$limit}";
+
+            $users = $this->db->fetchAll($sql, array((string) $role, (string) $status));   
+        }
+
+        else if ( $role != 'ALL' )
+        {
+            $sql = "$select 
+                    WHERE roles = ? 
+                    ORDER BY $orderBy
+                    LIMIT {$offset}, {$limit}";
+
+            $users = $this->db->fetchAll($sql, array((string) $role));   
+        }
+
+        else if ( $status != 'ALL' )
+        {
+            $sql = "$select 
+                    WHERE status = ? 
+                    ORDER BY $orderBy
+                    LIMIT {$offset}, {$limit}";
+
+            $users = $this->db->fetchAll($sql, array((string) $status));   
+        }
+
+        else 
+        {
+            $sql = "$select 
+                    ORDER BY $orderBy
+                    LIMIT {$offset}, {$limit}";
+
+            $users = $this->db->fetchAll($sql);   
+        }
+
+        $this->lastSQL = $sql;
+        
+        return $users; 
     }
 }

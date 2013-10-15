@@ -1,0 +1,57 @@
+
+{% extends "base.twig" %}
+
+{% set current_page_name = 'user-admin' %}
+{% set page_title = 'User Administration' ~ ' |' %}
+
+
+{% block content %}
+
+<h1>User Administration</h1>
+<p>Click on a Status or a Role below to filter posts</p>
+
+{# if the filter user or category is on then show the filters bar #}
+{% if (filter_roles != 'ALL') or (filter_status != 'ALL') %}
+<p>
+	{% if filter_status != 'ALL' %}<a href="/admin/users{% if filter_roles != 'ALL' %}?roles={{ filter_roles }}{% endif %}">Status: {{ filter_status }} &times;</a> {% endif %} 
+
+	{% if filter_roles != 'ALL' %}<a href="/admin/users{% if filter_status != '' %}?status={{ filter_status }}{% endif %}">Roles: {{ filter_roles }} &times;</a> {% endif %} 
+
+</p>
+{% endif %}	
+
+<table id="posts_table" class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>First</th>
+            <th>Last</th>
+            <th>Email</th>
+            <th>Roles</th>
+            <th>Status</th>
+            <th>Action</th>
+            <th>{# checkbox for bulk actions #}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for user in users %}
+
+   		<tr>
+            <td><a href="/user/{{ user.username }}">{{ user.username }}</a></td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td><a href="/admin/users?roles={{ user.roles }}{% if filter_status != 'ALL' %}&status={{ filter_status }}{% endif %}">{{ user.roles }}</a></td>
+            <td><a href="/admin/users?status={{ user.status }}{% if filter_roles != '' %}&roles={{ filter_roles }}{% endif %}">{{ user.status }}</a></td>
+            <td><a href="/admin/user/{{ user.username }}">Edit</a> | <a href="/admin/usner/{{ user.username }}?action=delete&from=admin" onclick="return confirm('Are you sure?')">Delete</a></td>
+            <td><input type="checkbox" name="post-{{ user.username }}" value="{{ user.username }}"></td>
+        </tr>
+
+	{% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}      

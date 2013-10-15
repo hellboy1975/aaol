@@ -38,6 +38,30 @@ $admin->get('/posts', function () use ($app) {
 });
 
 $admin->get('/users', function () use ($app) {
+
+	// fetch all the posts
+	$status = $app['request']->query->get('status');
+	$roles = $app['request']->query->get('roles');
+	$offset = $app['request']->query->get('offset');
+
+	if ($status == '') $status = POST_TYPE_ALL;
+	if ($roles == '') $roles = POST_TYPE_ALL;
+
+	$u = new UserProvider( $app['db'] );
+
+	$users = $u->fetchUsers($roles, $status);
+
+    return $app['twig']->render('admin/users.twig', array(
+    	'users' => $users,
+    	'filter_roles' => $roles,
+    	'filter_status' => $status,
+    	'lastSQL' => $u->lastSQL
+    	)
+    );
+});
+
+
+$admin->get('/users', function () use ($app) {
     return $app['twig']->render('stub.twig');
 });
 
