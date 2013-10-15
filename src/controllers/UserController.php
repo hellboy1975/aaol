@@ -9,6 +9,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 $user = $app['controllers_factory'];
 
+/**
+ * This route is for editing the users own profile only.  Users changing settings in other users
+ * should user the admin/user route.
+ */
 $user->match('/', function (Request $request) use ($app) {
 
 	$user = $app['security']->getToken()->getUser();
@@ -19,7 +23,8 @@ $user->match('/', function (Request $request) use ($app) {
     $data = array(
         'first_name' => $userFields['first_name'],
         'last_name' => $userFields['last_name'],
-        'email' => $userFields['email']
+        'email' => $userFields['email'],
+        'bio' => $userFields['bio']
     );
 
 
@@ -35,6 +40,9 @@ $user->match('/', function (Request $request) use ($app) {
         ))
         ->add('email', 'email', array(
             'attr' => array('class' => 'form-control'),
+        ))
+        ->add('bio', 'textarea', array(
+            'attr' => array('class' => 'html-editor'),
         ))
         ->getForm();
 
@@ -53,7 +61,7 @@ $user->match('/', function (Request $request) use ($app) {
         }
     }
     // display the form
-    return $app['twig']->render('default_form.twig', array('form' => $form->createView()));
+    return $app['twig']->render('user-settings.twig', array('form' => $form->createView()));
 });
 
 

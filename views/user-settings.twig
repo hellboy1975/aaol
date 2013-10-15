@@ -1,0 +1,20 @@
+{% extends "base.twig" %}
+
+{% set current_page_name = 'user-settings' %}
+{% set page_title = 'User Settings |' %}
+
+{% block content %}
+
+<h1>User Settings{{ ': ' ~ user_data.username|default( '' ) }}</h1>
+
+<form action="#" method="post">
+    {{ form_widget(form) }}
+
+    <br>
+
+    <button class="btn btn-default">Save</button>
+</form>
+
+
+
+{% endblock %}    

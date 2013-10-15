@@ -168,8 +168,18 @@ class UserProvider implements UserProviderInterface
 
     private function _usersSelect()
     {
-        return "SELECT id, username, roles, first_name, last_name, email, status
+        return "SELECT id, username, roles, first_name, last_name, email, status, bio
                     FROM user";
+    }
+
+    public function fetchUser($username) 
+    {
+        $select = $this->_usersSelect();      
+        
+        $sql = "$select 
+                WHERE username = ?";
+
+        return $this->db->fetchAssoc($sql, array((string) $username));     
     }
 
     public function fetchUsers($role = 'ALL', $status = 'ALL', $order = USER_ORDER_USERNAME_ASC, $limit = 100, $offset = 0) 
