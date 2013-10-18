@@ -7,5 +7,6 @@ require_once __DIR__ . '/composer' . '/autoload_real.php';
 // AAOL specific classes
 require_once __DIR__.'/../src/model/BaseModel.php';
 require_once __DIR__.'/../src/model/PostsModel.php';
+require_once __DIR__.'/../src/model/CodesModel.php';
 
 return ComposerAutoloaderInit7b1d840c37a57a8c087c322defac4717::getLoader();
