@@ -92,6 +92,146 @@ $admin->get('/posts', function () use ($app) {
     );
 });
 
+/**
+ *  Top level Types route
+ */
+
+$admin->match('/types', function (Request $request) use ($app) {
+
+	$c = new CodesModel( $app['db'], $app );
+
+	$codes = $c->fetchTypes();
+	$typeCodes = $c->fetchTypeCodes();
+
+	$form = $app['form.factory']->createBuilder('form', $data)
+        ->add('code', 'text', array(
+        	'label' => 'Code',
+            'attr' => array('class' => 'form-control')  
+        ))
+        ->add('description', 'text', array(
+        	'label' => 'Description',
+            'attr' => array('class' => 'form-control')
+        ))
+        ->add('parent_type', 'choice', array(
+            'choices' => $typeCodes,
+            'label' => 'Parent Type',
+            'expanded' => false,
+            'multiple' => false,
+            'attr'=> array('class'=>'form-control')
+        ))
+        ->add('force_parent', 'text', array(
+            'label' => 'Force Parent',
+            'attr' => array('class' => 'form-control')
+        ))
+        ->getForm();
+
+	if ('POST' == $request->getMethod()) {
+        $form->bind($request);
+
+        if ($form->isValid()) 
+        {
+            $data = $form->getData();
+
+            $data['type'] = "TYPE";
+            
+			$app['db']->insert('code', $data);
+
+            // redirect back to the homepage for now
+            return $app->redirect('/admin/types');
+
+        }
+    }        
+
+    return $app['twig']->render('admin/codes.twig', array(
+    	'codes' => $codes,
+    	'form' => $form->createView()
+    	)
+    );
+});
+
+/**
+ * Fetches all the codes that belong to a certain type
+ */
+$admin->match('/types/{type}', function (Request $request, $type) use ($app) {
+
+	$c = new CodesModel( $app['db'], $app );
+
+	
+    $parent = $c->getSingleCode($type);
+    
+    $typeCodes = $c->fetchTypeCodes($parent['type']);
+
+	$form = $app['form.factory']->createBuilder('form', $data)
+        ->add('code', 'text', array(
+        	'label' => 'Code',
+            'attr' => array('class' => 'form-control')  
+        ))
+        ->add('description', 'text', array(
+        	'label' => 'Description',
+            'attr' => array('class' => 'form-control')
+        ))->getForm();
+
+    if ( $parent['force_parent'] != '') 
+    {
+        $form->add('parent', 'hidden', array(
+            'data' => $parent['force_parent'],
+        ));
+    }
+    else 
+    {
+        $form->add('parent', 'choice', array(
+            'choices' => $typeCodes,
+            'label' => 'Parent Type',
+            'expanded' => false,
+            'attr'=> array('class'=>'form-control')
+        ));
+    }
+
+
+	if ('POST' == $request->getMethod()) {
+        $form->bind($request);
+
+        if ($form->isValid()) 
+        {
+            $data = $form->getData();
+
+            $data['type'] = $parent['code'];
+            $data['parent_type'] = $parent['parent_type'];
+            
+			$app['db']->insert('code', $data);
+
+            // redirect back to the homepage for now
+            return $app->redirect("/admin/types/$type");
+
+        }
+    }   
+
+    // fetch the list of codes for this type
+    $codes = $c->fetchCodes($type);
+
+    return $app['twig']->render('admin/codes.twig', array(
+    	'codes' => $codes,
+    	'type' => $type,
+    	'form' => $form->createView(),
+        'force_parent' => $parent['force_parent']
+    	)
+    );
+});
+
+$admin->get('/types/{type}/{parentCode}', function ($type, $parentCode) use ($app) {
+
+	$c = new CodesModel( $app['db'], $app );
+
+	$codes = $c->fetchCodesByTypeParent($type, $parentCode);
+
+    return $app['twig']->render('admin/codes.twig', array(
+    	'codes' => $codes,
+    	'type' => $type,
+    	'parent_code' => $parentCode
+    	)
+    );
+});
+
 $admin->get('/users', function () use ($app) {
 
 	// fetch all the posts

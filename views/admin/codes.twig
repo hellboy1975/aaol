@@ -1,0 +1,89 @@
+
+{% extends "base.twig" %}
+
+{% set current_page_name = 'codes-admin' %}
+{% set page_title = 'Codes Administration' ~ ' |' %}
+
+
+{% block content %}
+
+<h1></h1>
+
+<div class="page-header">
+  <h1>Code/Type Administration <small>{{  type|default( '' ) }}</small></h1>
+</div>
+
+{% if parent_code is defined %}
+
+<ol class="breadcrumb">
+    <li><a href="/admin/types">Types</a></li>
+    <li><a href="/admin/types/{{ type }}">{{ type }}</a></li>
+    <li class="active">{{ parent_code }}</li>
+</ol>
+
+{% elseif type is defined %}
+
+<ol class="breadcrumb">
+    <li><a href="/admin/types">Types</a></li>
+    <li class="active">{{ type }}</li>
+</ol>
+
+
+
+{% else %}
+
+<ol class="breadcrumb">
+    <li class="active">Types</li>
+</ol>
+
+{% endif %}
+
+{% if codes %}        
+
+<table id="posts_table" class="table table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Parent Type</th>
+            <th>Parent Code</th>
+            <th>Action</th>
+            <th>{# checkbox for bulk actions #}</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+
+    {% for code in codes %}
+
+   		<tr>
+            <td><a href="/admin/types/{% if type is defined %}{{ type }}/{% endif %}{{ code.code }}">{{ code.code }}</a></td>
+            <td>{{ code.description }}</td>
+            <td>{% if code.parent_type != 'NONE' %}{{ code.parent_type }}{% endif %}</td>
+            <td>{{ code.parent }}</td>
+            <td><a href="/admin/code/edit/{{ code.type }}/{{ code.code }}">Edit</a></td>
+            <td><input type="checkbox" name="post-{{ code.type }}-{{ code.code }}" value="{{ code.type }}-{{ code.code }}"></td>
+        </tr>
+
+	{% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<p>This code has no children.</p>
+
+{% endif %} {# if codes #}
+
+<form action="#" method="post">
+    {{ form_widget(form) }}
+
+    <br>
+    <button class="btn btn-default">Save</button>
+
+</form>
+
+{% endblock %}      
+
+

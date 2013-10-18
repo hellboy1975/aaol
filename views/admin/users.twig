@@ -45,7 +45,7 @@
             <td>{{ user.email }}</td>
             <td><a href="/admin/users?roles={{ user.roles }}{% if filter_status != 'ALL' %}&status={{ filter_status }}{% endif %}">{{ user.roles }}</a></td>
             <td><a href="/admin/users?status={{ user.status }}{% if filter_roles != '' %}&roles={{ filter_roles }}{% endif %}">{{ user.status }}</a></td>
-            <td><a href="/admin/user/{{ user.username }}">Edit</a> | <a href="/admin/usner/{{ user.username }}?action=delete&from=admin" onclick="return confirm('Are you sure?')">Delete</a></td>
+            <td><a href="/admin/user/{{ user.username }}">Edit</a> | <a href="/admin/user/{{ user.username }}?action=delete&from=admin" onclick="return confirm('This doesn't really work at the moment!?');return false;">Delete</a></td>
             <td><input type="checkbox" name="post-{{ user.username }}" value="{{ user.username }}"></td>
         </tr>
 
