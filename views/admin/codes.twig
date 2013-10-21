@@ -62,7 +62,7 @@
             <td>{{ code.description }}</td>
             <td>{% if code.parent_type != 'NONE' %}{{ code.parent_type }}{% endif %}</td>
             <td>{{ code.parent }}</td>
-            <td><a href="/admin/code/edit/{{ code.type }}/{{ code.code }}">Edit</a></td>
+            <td><a href="/admin/types/edit/{{ code.type }}/{{ code.code }}">Edit</a></td>
             <td><input type="checkbox" name="post-{{ code.type }}-{{ code.code }}" value="{{ code.type }}-{{ code.code }}"></td>
         </tr>
 
