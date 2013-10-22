@@ -58,7 +58,7 @@
     {% for code in codes %}
 
    		<tr>
-            <td><a href="/admin/types/{% if type is defined %}{{ type }}/{% endif %}{{ code.code }}">{{ code.code }}</a></td>
+            <td><a href="/admin/types/{{ code.code }}">{{ code.code }}</a></td>
             <td>{{ code.description }}</td>
             <td>{% if code.parent_type != 'NONE' %}{{ code.parent_type }}{% endif %}</td>
             <td>{{ code.parent }}</td>

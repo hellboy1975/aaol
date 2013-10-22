@@ -1,0 +1,24 @@
+{% extends "base.twig" %}
+
+{% set current_page_name = 'edit-code' %}
+{% set page_title = 'Edit Code |' %}
+
+{% block content %}
+
+<h1>Create/Edit Post</h1>
+
+<ol class="breadcrumb">
+    <li><a href="/admin/types">Types</a></li>
+    <li class="active">{{ breadcrumb }}</li>
+</ol>
+
+<form action="#" method="post">
+    {{ form_widget(form) }}
+
+    <br>
+
+    <button class="btn btn-default">Update</button>
+</form>
+
+
+{% endblock %}    

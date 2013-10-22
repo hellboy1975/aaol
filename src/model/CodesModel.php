@@ -32,6 +32,13 @@ class CodesModel extends BaseModel
 		return $return['force_parent'];
 	}
 
+	public function fetchSingleCode($type, $code)
+	{
+		$sql = "SELECT * FROM code WHERE type = ? and code = ?";
+
+		return $this->db->fetchAssoc($sql, array((string) $type, (string) $code));	
+	}
+
 	public function fetchCodes($type)
 	{
 		$sql = "SELECT * FROM code WHERE type = ?";
@@ -71,5 +78,24 @@ class CodesModel extends BaseModel
 		$sql = "SELECT * FROM code WHERE parent_type = ? and parent = ?";
 
 		return $this->db->fetchAll($sql, array((string) $type, (string) $parent));	
+	}
+
+	/**
+	 * Updates a CODE record
+	 * @param  array $data   	an array containing the updated data (usually created by a Silex Form)
+	 * @return handle      		handle to the CodeController object
+	 */
+	public function updateCode($data) 
+	{
+		$this->db->update('code', array(
+            'type'             	=> $data['type'],
+            'parent_type'       => $data['parent_type'],
+            'parent'           	=> $data['parent'],
+            'code'          	=> $data['code'],
+            'description'    	=> $data['description'],
+            'force_parent'    	=> $data['force_parent'],
+            ), array('type' => $data['type'], 'code' => $data['code']));
+
+		return $this;
 	}
 }

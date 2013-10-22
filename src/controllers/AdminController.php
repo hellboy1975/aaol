@@ -218,6 +218,72 @@ $admin->match('/types/{type}', function (Request $request, $type) use ($app) {
     );
 });
 
+/**
+ * Fetches all the codes that belong to a certain type
+ */
+$admin->match('/types/edit/{type}/{code}', function (Request $request, $type, $code) use ($app) {
+
+    $c = new CodesModel( $app['db'], $app );
+
+    
+    $data = $c->fetchSingleCode($type, $code);
+    
+
+    $form = $app['form.factory']->createBuilder('form', $data)
+        ->add('code', 'text', array(
+            'label' => 'Code',
+            'attr' => array('class' => 'form-control')  
+        ))
+        ->add('description', 'text', array(
+            'label' => 'Description',
+            'attr' => array('class' => 'form-control')
+        ))
+        ->add('type', 'text', array(
+            'label' => 'Type',
+            'attr' => array('class' => 'form-control')
+        ))
+        ->add('parent_type', 'text', array(
+            'label' => 'Parent Type',
+            'required' => false,
+            'attr' => array('class' => 'form-control')
+        ))
+        ->add('parent', 'text', array(
+            'label' => 'Parent Code',
+            'required' => false,
+            'attr' => array('class' => 'form-control')
+        ))
+        ->add('force_parent', 'text', array(
+            'label' => 'Force Parent',
+            'required' => false,
+            'attr' => array('class' => 'form-control')
+        ))
+        ->getForm();
+
+
+    if ('POST' == $request->getMethod()) {
+        $form->bind($request);
+
+        if ($form->isValid()) 
+        {
+            $data = $form->getData();
+
+            
+            $c->updateCode($data);
+
+            return $app->redirect("/types/edit/$type");
+
+        }
+    }   
+
+
+    return $app['twig']->render('admin/edit-code.twig', array(
+        'form' => $form->createView(),
+        'breadcrumb' => "$type - $code"
+        )
+    );
+});
+
+
 $admin->get('/types/{type}/{parentCode}', function ($type, $parentCode) use ($app) {
 
 	$c = new CodesModel( $app['db'], $app );
